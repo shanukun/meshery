@@ -17,16 +17,22 @@ package design
 import (
 	"fmt"
 	"strings"
+	"encoding/json"
+	"io"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
 	validSourceTypes     []string
+	sourceType string // pattern file type (manifest / compose)
 )
 
 // DesignCmd represents the root command for design commands
@@ -68,9 +74,67 @@ mesheryctl design list
 	},
 }
 
+
+func getSourceTypes() error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/types"
+	req, err := utils.NewRequest("GET", validTypesURL, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
+	}
+
+	defer resp.Body.Close()
+
+	var response []*models.PatternSourceTypesAPIResponse
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
+		return nil
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
+		return nil
+	}
+
+	for _, apiResponse := range response {
+		validSourceTypes = append(validSourceTypes, apiResponse.DesignType)
+	}
+
+	return nil
+}
+
+// returns full source name e.g. helm -> `Helm Chart`
+// user passes only helm, compose or manifest but server accepts full source type
+// e.g `Heml Chart`, `Docker Compose`, `Kubernetes Manifest`
+func getFullSourceType(sType string) (string, error) {
+	for _, validType := range validSourceTypes {
+		lowerType := strings.ToLower(validType)
+		// user may pass Pascal Case source e.g Helm
+		sType = strings.ToLower(sType)
+		if strings.Contains(lowerType, sType) {
+			return validType, nil
+		}
+	}
+
+	return sType, fmt.Errorf("no matching source type found")
+}
+
 func init() {
 	DesignCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd}
 	DesignCmd.AddCommand(availableSubcommands...)
 }

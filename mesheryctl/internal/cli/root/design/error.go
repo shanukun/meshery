@@ -24,8 +24,6 @@ import (
 const (
 	ErrImportDesignCode          = "mesheryctl-1001"
 	ErrInValidSourceCode         = "mesheryctl-1002"
-	ErrOnboardDesignCode         = "mesheryctl-1003"
-	ErrOffboardDesignCode        = "mesheryctl-1005"
 	ErrDesignFlagCode            = "mesheryctl-1006"
 	ErrDesignManifestCode        = "mesheryctl-1007"
 	ErrDesignsNotFoundCode       = "mesheryctl-1037"
@@ -42,10 +40,6 @@ const (
 const (
 	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
 Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
-
-	errOnboardMsg = `Usage: mesheryctl design onboard -f [filepath] -s [source type]
-Example: mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
-Description: Onboard pattern`
 )
 
 func ErrDesignNotFound() error {
@@ -90,14 +84,6 @@ func ErrDesignManifest() error {
 		[]string{"Provide the path to the design manifest. \n\n%v", errPatternMsg})
 }
 
-func ErrOnboardDesign() error {
-	return errors.New(ErrOnboardDesignCode, errors.Alert,
-		[]string{"Error Onboarding design"},
-		[]string{"Unable to onboard design due to empty path"},
-		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
-}
-
 func ErrDesignSourceType() error {
 	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
 		[]string{"Source type for the design to import not specified"},
@@ -114,13 +100,6 @@ func ErrViewDesignFlag() error {
 		[]string{"-a/-all cannot be used when [design name|id] is specified"})
 }
 
-func ErrOffboardDesign(err error) error {
-	return errors.New(ErrOffboardDesignCode, errors.Alert,
-		[]string{"Error Offboarding design"},
-		[]string{"Unable to offboard design due to empty path"},
-		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
-}
 func ErrCopyData(filepath string, err error) error {
 	return errors.New(ErrCopyDataCode, errors.Alert,
 		[]string{"Error copying data to file"},

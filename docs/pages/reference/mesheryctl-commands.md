@@ -504,7 +504,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.design %}
     <tr>
-      <td rowspan=23><a href="{{ site.baseurl }}/reference/mesheryctl/design">{{ command7.name }}</a></td>
+      <td rowspan=17><a href="{{ site.baseurl }}/reference/mesheryctl/design">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
@@ -569,18 +569,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand6 = command7.subcommands.onboard %}
-      <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/design/onboard">{{ subcommand6.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand6.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
       {% assign subcommand6 = command7.subcommands.export %}
       <tr>
         <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/design/export">{{ subcommand6.name }}</a></td>
@@ -588,18 +576,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>{{ subcommand6.description }}</td>
       </tr>
       {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand7 = command7.subcommands.offboard %}
-      <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/design/offboard">{{ subcommand7.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand7.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand7.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td>{{ flag.name }}</td>
           <td>{{ flag.description }}</td>
