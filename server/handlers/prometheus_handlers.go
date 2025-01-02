@@ -262,6 +262,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug("Prometheus URL %s saved", promURL)
+		_ = json.NewEncoder(w).Encode(connection)
 	} else if req.Method == http.MethodDelete {
 		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
 		return
@@ -273,8 +274,6 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	_, _ = w.Write([]byte("{}"))
 }
 
 // swagger:route GET /api/telemetry/metrics/ping/{connectionID} PrometheusAPI idGetPrometheusPing

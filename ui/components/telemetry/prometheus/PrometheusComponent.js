@@ -76,7 +76,7 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
       if (typeof result !== 'undefined') {
         const notify = self.props.notify;
         notify({ message: 'Prometheus was configured!', event_type: EVENT_TYPES.SUCCESS });
-        self.setState({ prometheusConfigSuccess: true });
+        self.setState({ prometheusConfigSuccess: true, connectionID: result.id });
         self.props.updatePrometheusConfig({
           prometheus: { prometheusURL, selectedPrometheusBoardsConfigs },
         });
